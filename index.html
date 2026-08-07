@@ -1,44 +1,255 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ar" dir="rtl">
 <head>
-    <title></title>
-    <meta charset="utf-8" />
-    <script src="Scripts/jquery-1.9.1.min.js"></script>
-    <link href="Content/bootstrap.min.css" rel="stylesheet" />
-    <script src="Scripts/isRockFx.js"></script>
-    <script>
-        $(function () {
-            $('#ButtonCal').click(
-                function () {
-                    //取得用戶輸入的參數
-                    var para = { 'height': $('#txbHeight').val(), 'weight': $('#txbWeight').val() };
-                    //呼叫API
-                    ExecuteAPI('Example', 'BMI', para,
-                        //呼叫WebAPI成功時運行的Call Back Function
-                        function (result) {
-                            alert(result.Data);
-                        }
-                    );
-                }
-            );
-        });
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Purifex — حلول تنقية المياه للمنشآت</title>
+<meta name="description" content="Purifex — توريد وصيانة أنظمة تنقية المياه للفنادق، المصانع، والمنشآت الطبية في مصر.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/@tabler/icons-webfont/3.1.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --navy:#0E1E33; --navy-2:#16304F; --ink:#12243D; --blue:#1E4D8C;
+  --accent:#7A1230; --accent-d:#57091F; --accent-t:#F8ECEF;
+  --paper:#F4F6F9; --white:#fff; --line:#E1E6EE; --muted:#5E6E82;
+  --ok:#15A46E; --ok-t:#E7F7F0; --danger:#D14343; --danger-t:#FBEAEA;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;}
+h1,h2,h3{font-family:'Cairo',sans-serif;font-weight:800;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
+
+/* nav */
+header.site{background:var(--navy);color:#fff;position:sticky;top:0;z-index:30;}
+.nav-in{max-width:1180px;margin:0 auto;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.brand{display:flex;align-items:center;gap:9px;font-family:'Cairo',sans-serif;font-weight:800;font-size:18px;}
+.brand i{color:#E6B5C0;font-size:22px;}
+nav.links{display:flex;gap:26px;font-size:14px;font-weight:600;}
+nav.links a{opacity:.85;}
+nav.links a:hover{opacity:1;}
+.nav-cta{background:var(--accent);color:#fff;border-radius:9px;padding:9px 18px;font-size:13.5px;font-weight:700;}
+.nav-cta:hover{background:var(--accent-d);}
+@media(max-width:760px){nav.links{display:none;}}
+
+/* hero */
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:70px 0 90px;}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;}
+.hero h1{font-size:38px;line-height:1.35;margin-bottom:18px;}
+.hero h1 span{color:#E6B5C0;}
+.hero p{font-size:16px;color:#C7D2E0;max-width:520px;margin-bottom:28px;}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn{border:none;border-radius:10px;padding:13px 24px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;}
+.btn.primary{background:var(--accent);color:#fff;}
+.btn.primary:hover{background:var(--accent-d);}
+.btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.25);}
+.btn.ghost:hover{background:rgba(255,255,255,.16);}
+.hero-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:26px;}
+.hero-stat{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px dashed rgba(255,255,255,.15);}
+.hero-stat:last-child{border-bottom:none;}
+.hero-stat .l{color:#AEBCD0;font-size:13.5px;}
+.hero-stat .v{font-family:'Cairo',sans-serif;font-weight:800;font-size:20px;}
+@media(max-width:820px){.hero .wrap{grid-template-columns:1fr;}.hero h1{font-size:29px;}}
+
+/* sections */
+section{padding:70px 0;}
+.section-head{text-align:center;max-width:640px;margin:0 auto 44px;}
+.section-head .eyebrow{color:var(--accent);font-weight:800;font-size:13px;letter-spacing:.3px;margin-bottom:10px;}
+.section-head h2{font-size:28px;margin-bottom:12px;}
+.section-head p{color:var(--muted);font-size:15px;}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+@media(max-width:900px){.grid3{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.grid3{grid-template-columns:1fr;}}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;}
+.card i{font-size:26px;color:var(--accent);background:var(--accent-t);width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.card h3{font-size:17px;margin-bottom:8px;}
+.card p{color:var(--muted);font-size:14px;}
+
+.sectors{background:#fff;}
+.chiprow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+.chip{background:var(--paper);border:1.5px solid var(--line);border-radius:30px;padding:11px 20px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.chip i{color:var(--accent);}
+
+/* contact / lead form */
+.contact{background:var(--navy);color:#fff;}
+.contact .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start;}
+.contact h2{font-size:27px;margin-bottom:14px;}
+.contact p{color:#C7D2E0;font-size:14.5px;margin-bottom:20px;}
+.contact-info{display:flex;flex-direction:column;gap:14px;margin-top:22px;}
+.contact-info div{display:flex;align-items:center;gap:10px;font-size:14px;color:#DCE4EE;}
+.contact-info i{color:#E6B5C0;font-size:18px;}
+.formCard{background:#fff;color:var(--ink);border-radius:18px;padding:28px;}
+.fl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:0 0 6px;}
+.fi{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:14.5px;margin-bottom:16px;background:#fff;color:var(--ink);}
+.fi:focus{outline:none;border-color:var(--accent);}
+textarea.fi{resize:vertical;min-height:90px;}
+.formMsg{font-size:13px;border-radius:9px;padding:10px 12px;margin-bottom:14px;display:none;}
+.formMsg.ok{display:block;background:var(--ok-t);color:var(--ok);}
+.formMsg.err{display:block;background:var(--danger-t);color:var(--danger);}
+@media(max-width:820px){.contact .wrap{grid-template-columns:1fr;}}
+
+footer{background:#0A1524;color:#8CA0BC;padding:30px 0;}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;}
+footer a{opacity:.85;}
+footer a:hover{opacity:1;}
+</style>
 </head>
-
 <body>
-    <div class="row" style="margin:10px">
-        <div class="col-md-12">
-            <div class="form-group">
-                身高:
-                <input id="txbHeight" class="form-control" placeholder="請輸入身高" />
-                體重:
-                <input id="txbWeight" class="form-control" placeholder="請輸入體重" />
-                <br />
-                <button class="btn btn-primary" id="ButtonCal">計算</button>
-            </div>
-        </div>
-    </div>
-</body>
 
+<header class="site">
+  <div class="nav-in">
+    <div class="brand"><i class="ti ti-droplet-filled"></i> Purifex</div>
+    <nav class="links">
+      <a href="#services">خدماتنا</a>
+      <a href="#sectors">القطاعات</a>
+      <a href="#contact">تواصل معنا</a>
+    </nav>
+    <a class="nav-cta" href="#contact">اطلب عرض سعر</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>حلول <span>تنقية المياه</span> الموثوقة لمنشأتك</h1>
+      <p>نورّد ونصون أنظمة تنقية وترشيح المياه للفنادق، المصانع، المنشآت الطبية، والمرافق التجارية في جميع أنحاء مصر — بجودة عالية وخدمة سريعة.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#contact"><i class="ti ti-send"></i> اطلب عرض سعر</a>
+        <a class="btn ghost" href="#services"><i class="ti ti-list-details"></i> تعرّف على خدماتنا</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-stat"><span class="l">سنوات الخبرة</span><span class="v">10+</span></div>
+      <div class="hero-stat"><span class="l">منشأة تمت خدمتها</span><span class="v">200+</span></div>
+      <div class="hero-stat"><span class="l">وقت الاستجابة</span><span class="v">24 ساعة</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">خدماتنا</div>
+      <h2>كل ما تحتاجه منشأتك من مياه نقية</h2>
+      <p>من التوريد إلى التركيب والصيانة الدورية، نغطي دورة حياة نظام التنقية بالكامل.</p>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <i class="ti ti-filter"></i>
+        <h3>توريد أنظمة الترشيح</h3>
+        <p>أنظمة ترشيح وتنقية متكاملة تناسب حجم واحتياج منشأتك، من الوحدات الصغيرة إلى الأنظمة الصناعية.</p>
+      </div>
+      <div class="card">
+        <i class="ti ti-tool"></i>
+        <h3>التركيب والصيانة</h3>
+        <p>فريق فني متخصص لتركيب الأنظمة وصيانتها الدورية لضمان أداء مستمر بدون انقطاع.</p>
+      </div>
+      <div class="card">
+        <i class="ti ti-flask"></i>
+        <h3>فحص جودة المياه</h3>
+        <p>اختبارات دورية لجودة المياه لضمان مطابقتها للمعايير الصحية والصناعية المطلوبة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sectors" class="sectors">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">القطاعات التي نخدمها</div>
+      <h2>موثوق بنا في مختلف القطاعات</h2>
+    </div>
+    <div class="chiprow">
+      <div class="chip"><i class="ti ti-building-skyscraper"></i> الفنادق والمنتجعات</div>
+      <div class="chip"><i class="ti ti-building-factory-2"></i> المصانع والمنشآت الصناعية</div>
+      <div class="chip"><i class="ti ti-stethoscope"></i> المنشآت الطبية</div>
+      <div class="chip"><i class="ti ti-building-store"></i> المطاعم والمرافق التجارية</div>
+      <div class="chip"><i class="ti ti-home-2"></i> المجمعات السكنية</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div>
+      <h2>تواصل معنا</h2>
+      <p>راسلنا لطلب عرض سعر مخصص لمنشأتك، وسيتواصل معك فريقنا خلال 24 ساعة.</p>
+      <div class="contact-info">
+        <div><i class="ti ti-phone"></i> +20 100 000 0000</div>
+        <div><i class="ti ti-mail"></i> info@purifex.com</div>
+        <div><i class="ti ti-map-pin"></i> القاهرة، مصر</div>
+      </div>
+    </div>
+    <div class="formCard">
+      <div class="formMsg" id="formMsg"></div>
+      <form id="leadForm">
+        <label class="fl">اسم المنشأة</label>
+        <input class="fi" id="fFacility" required>
+        <label class="fl">اسم المسؤول</label>
+        <input class="fi" id="fContact" required>
+        <label class="fl">رقم الهاتف</label>
+        <input class="fi" id="fPhone" required>
+        <label class="fl">تفاصيل الطلب</label>
+        <textarea class="fi" id="fMessage" placeholder="اكتب احتياجك بإيجاز..."></textarea>
+        <button class="btn primary" id="fSubmit" type="submit" style="width:100%;justify-content:center;">
+          <i class="ti ti-send"></i> إرسال الطلب
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 Purifex. جميع الحقوق محفوظة.</div>
+    <a href="admin.html">دخول الموظفين</a>
+  </div>
+</footer>
+
+<script>
+/* Must match the values used in admin.html */
+const SUPABASE_URL = 'https://dsyupeuejmeehjrpvvaw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_0tBa7gpYmUEnffarB4W0ZA_O0V_1vng';
+const sb = (SUPABASE_URL.startsWith('http') && window.supabase)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const $ = id => document.getElementById(id);
+$('leadForm').onsubmit = async e => {
+  e.preventDefault();
+  const msgEl = $('formMsg');
+  msgEl.className = 'formMsg';
+  if (!sb) {
+    msgEl.textContent = 'تعذّر الاتصال بالخادم حالياً، برجاء المحاولة لاحقاً أو التواصل هاتفياً.';
+    msgEl.classList.add('err');
+    return;
+  }
+  const btn = $('fSubmit');
+  btn.disabled = true;
+  const payload = {
+    facility: $('fFacility').value.trim(),
+    contact_person: $('fContact').value.trim(),
+    phone: $('fPhone').value.trim(),
+    message: $('fMessage').value.trim(),
+    status: 'new'
+  };
+  const { error } = await sb.from('leads').insert(payload);
+  btn.disabled = false;
+  if (error) {
+    msgEl.textContent = 'حدث خطأ أثناء إرسال الطلب: ' + error.message;
+    msgEl.classList.add('err');
+    return;
+  }
+  msgEl.textContent = 'تم إرسال طلبك بنجاح، سيتواصل معك فريقنا قريباً.';
+  msgEl.classList.add('ok');
+  e.target.reset();
+};
+</script>
+</body>
 </html>
