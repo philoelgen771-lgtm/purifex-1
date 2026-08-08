@@ -177,12 +177,17 @@ header.top{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:
       <label class="fl">الفئة</label>
       <input class="fi" id="pCategory" required list="pCatList">
       <datalist id="pCatList"></datalist>
+      <label class="fl">الفئة الفرعية (اختياري)</label>
+      <input class="fi" id="pSubcategory" list="pSubList">
+      <datalist id="pSubList"></datalist>
       <label class="fl">الوصف</label>
       <textarea class="fi" id="pDesc"></textarea>
       <div style="display:flex;gap:12px;">
-        <div style="flex:1;"><label class="fl">السعر (ج.م)</label><input class="fi" id="pPrice" type="number" step="0.01" min="0" required></div>
-        <div style="flex:1;"><label class="fl">الوحدة</label><input class="fi" id="pUnit" value="للوحدة" required></div>
+        <div style="flex:1;"><label class="fl">السعر قبل الضريبة (اختياري)</label><input class="fi" id="pPriceBeforeVat" type="number" step="0.01" min="0"></div>
+        <div style="flex:1;"><label class="fl">السعر شامل الضريبة (ج.م)</label><input class="fi" id="pPrice" type="number" step="0.01" min="0" required></div>
       </div>
+      <label class="fl">الوحدة</label>
+      <input class="fi" id="pUnit" value="للوحدة" required>
       <label class="fl">SKU (اختياري)</label>
       <input class="fi" id="pSku">
       <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;margin-bottom:16px;">
@@ -278,6 +283,8 @@ async function load(){
   if(tab==='products'){
     const cats=[...new Set(rows.map(r=>r.category))];
     $('pCatList').innerHTML=cats.map(c=>'<option value="'+esc(c)+'">').join('');
+    const subs=[...new Set(rows.map(r=>r.subcategory).filter(Boolean))];
+    $('pSubList').innerHTML=subs.map(c=>'<option value="'+esc(c)+'">').join('');
   }
   render();
 }
@@ -397,7 +404,9 @@ function openProductModal(p){
   $('pId').value = p ? p.id : '';
   $('pName').value = p ? p.name : '';
   $('pCategory').value = p ? p.category : '';
+  $('pSubcategory').value = p ? (p.subcategory||'') : '';
   $('pDesc').value = p ? (p.description||'') : '';
+  $('pPriceBeforeVat').value = p && p.price_before_vat!=null ? p.price_before_vat : '';
   $('pPrice').value = p ? p.price : '';
   $('pUnit').value = p ? p.unit : 'للوحدة';
   $('pSku').value = p ? (p.sku||'') : '';
@@ -412,10 +421,13 @@ $('pForm').onsubmit=async e=>{
   e.preventDefault();
   const msgEl=$('pFormMsg'); msgEl.className='formMsg';
   const id=$('pId').value;
+  const pbv=$('pPriceBeforeVat').value.trim();
   const payload={
     name:$('pName').value.trim(),
     category:$('pCategory').value.trim(),
+    subcategory:$('pSubcategory').value.trim()||null,
     description:$('pDesc').value.trim(),
+    price_before_vat: pbv===''?null:Number(pbv),
     price:Number($('pPrice').value),
     unit:$('pUnit').value.trim(),
     sku:$('pSku').value.trim()||null,
