@@ -1054,18 +1054,26 @@ function deliveryModal(){
   closeCart();
   const en=lang==='en';
   let payMethod='cash';
-  const addr=(account&&account.address)||'';
-  openM('<div class="mtop"><div><h3>'+(en?'Delivery & payment':'التسليم والدفع')+'</h3>'
-   +'<p class="ms">'+(en?'Confirm where to deliver and how you\'ll pay.':'أكّد عنوان التسليم وطريقة الدفع.')+'</p></div>'
+  const city=(account&&account.addrCity)||'';
+  const area=(account&&account.addrArea)||'';
+  const street=(account&&account.addrStreet)||'';
+  const notes=(account&&account.addrNotes)||'';
+  openM('<div class="mtop"><div><h3>'+(en?'Payment & delivery':'الدفع والتسليم')+'</h3>'
+   +'<p class="ms">'+(en?'Choose how you\'ll pay, then confirm delivery details.':'اختر طريقة الدفع ثم أكّد بيانات التسليم.')+'</p></div>'
    +'<button class="xbtn" id="mxD"><i class="ti ti-x"></i></button></div>'+mini()
-   +'<label class="fl">'+(en?'Delivery address (stores)':'عنوان التسليم (المخازن)')+'</label>'
-   +'<input class="fi" id="dAddr" value="'+esc2(addr)+'" required>'
-   +'<label class="fl" style="margin-top:16px;">'+(en?'Payment method':'طريقة الدفع')+'</label>'
+   +'<label class="fl">'+(en?'Payment method':'طريقة الدفع')+'</label>'
    +'<div class="paygrid" id="payGrid">'
      +'<button type="button" class="paych on" data-p="cash"><i class="ti ti-truck-delivery"></i><span>'+PAY_LABELS[en?'en':'ar'].cash+'</span></button>'
      +'<button type="button" class="paych" data-p="visa"><i class="ti ti-credit-card"></i><span>'+PAY_LABELS[en?'en':'ar'].visa+'</span></button>'
      +'<button type="button" class="paych" data-p="apple"><i class="ti ti-brand-apple"></i><span>Apple Pay</span></button>'
    +'</div>'
+   +'<label class="fl" style="margin-top:18px;">'+(en?'Delivery location':'موقع التسليم')+'</label>'
+   +'<div class="row2"><div><label class="fl" style="margin-top:0;">'+(en?'City / Governorate':'المدينة / المحافظة')+'</label><input class="fi" id="dCity" value="'+esc2(city)+'" required></div>'
+   +'<div><label class="fl" style="margin-top:0;">'+(en?'Area / district':'المنطقة / الحي')+'</label><input class="fi" id="dArea" value="'+esc2(area)+'" required></div></div>'
+   +'<label class="fl">'+(en?'Street & building (stores)':'الشارع ورقم المبنى (المخازن)')+'</label>'
+   +'<input class="fi" id="dStreet" value="'+esc2(street)+'" required>'
+   +'<label class="fl">'+(en?'Landmark / notes (optional)':'علامة مميزة / ملاحظات (اختياري)')+'</label>'
+   +'<input class="fi" id="dNotes" value="'+esc2(notes)+'">'
    +'<button class="btn btn-accent" style="width:100%;margin-top:18px;" id="dConfirm">'+(en?'Confirm & send order':'تأكيد وإرسال الطلب')+'</button>');
   $('mxD').onclick=closeM;
   $('payGrid').onclick=e=>{
@@ -1074,9 +1082,11 @@ function deliveryModal(){
     $('payGrid').querySelectorAll('.paych').forEach(x=>x.classList.toggle('on',x===b));
   };
   $('dConfirm').onclick=()=>{
-    const addrVal=$('dAddr').value.trim();
-    if(!addrVal){$('dAddr').focus();return;}
-    place(addrVal,payMethod);
+    const cityVal=$('dCity').value.trim(),areaVal=$('dArea').value.trim(),streetVal=$('dStreet').value.trim(),notesVal=$('dNotes').value.trim();
+    if(!cityVal){$('dCity').focus();return;}
+    if(!areaVal){$('dArea').focus();return;}
+    if(!streetVal){$('dStreet').focus();return;}
+    place({city:cityVal,area:areaVal,street:streetVal,notes:notesVal},payMethod);
   };
 }
 function signupModal(){
@@ -1089,15 +1099,14 @@ function signupModal(){
    +'<div class="row2"><div><label class="fl">'+(en?'Purchasing contact':'مسؤول المشتريات')+'</label><input class="fi" id="oP" required></div>'
    +'<div><label class="fl">'+(en?'Phone':'رقم الهاتف')+'</label><input class="fi" id="oT" type="tel" required></div></div>'
    +'<label class="fl">'+(en?'Email':'البريد الإلكتروني')+'</label><input class="fi" id="oE" type="email" required>'
-   +'<label class="fl">'+(en?'Delivery address (stores)':'عنوان التسليم (المخازن)')+'</label><input class="fi" id="oA" required>'
    +'<label class="fl">'+(en?'Choose a password':'كلمة المرور')+'</label><input class="fi" id="oW" type="password" required>'
-   +'<button type="submit" class="btn btn-accent" style="width:100%;margin-top:20px;">'+(en?'Create account & send order':'إنشاء حساب وإرسال الطلب')+'</button>'
+   +'<button type="submit" class="btn btn-accent" style="width:100%;margin-top:20px;">'+(en?'Create account & continue':'إنشاء حساب والمتابعة')+'</button>'
    +'<p style="font-size:12.5px;color:var(--muted);text-align:center;margin-top:12px;">'+(en?'Already registered?':'لديك حساب بالفعل؟')
    +' <a href="#" id="toSi" style="color:var(--accent-d);font-weight:700;">'+(en?'Sign in':'تسجيل الدخول')+'</a></p></form>');
   $('mx').onclick=closeM;
   $('toSi').onclick=e=>{e.preventDefault();signinModal();};
   $('cof').onsubmit=e=>{e.preventDefault();
-    setAccount({name:$('oP').value.trim(),facility:$('oN').value.trim(),email:$('oE').value.trim(),phone:$('oT').value.trim(),address:$('oA').value.trim()});
+    setAccount({name:$('oP').value.trim(),facility:$('oN').value.trim(),email:$('oE').value.trim(),phone:$('oT').value.trim()});
     deliveryModal();
   };
 }
@@ -1121,14 +1130,20 @@ function signinModal(){
     deliveryModal();
   };
 }
-async function place(address,paymentMethod){
+async function place(addr,paymentMethod){
   const en=lang==='en',g=gross(),n=net(),ref='PX-'+Math.floor(100000+Math.random()*899999);
   const items=Object.entries(cart).map(([id,qty])=>{const p=byId(id);return {id,name:p[2],unit:p[3],qty,price:p[5],line_total:+(p[5]*qty).toFixed(2)};});
   const itemCount=count();
+  const addrParts=[addr.city,addr.area,addr.street].filter(Boolean);
+  let address=addrParts.join(' - ');
+  if(addr.notes) address+=(address?' | ':'')+addr.notes;
   closeCart();closeM();
   openM('<div class="succ"><div class="ring"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i></div><h3>'+(en?'Sending your order...':'جارٍ إرسال طلبك...')+'</h3></div>');
   try{
-    if(account) account.address=address;
+    if(account){
+      account.address=address;
+      account.addrCity=addr.city||'';account.addrArea=addr.area||'';account.addrStreet=addr.street||'';account.addrNotes=addr.notes||'';
+    }
     setAccount(account);
     await safeInsert('orders',{
       ref,
