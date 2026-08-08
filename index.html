@@ -365,7 +365,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.6);padding:52px 0 24px;}
     <div class="nright">
       <button class="lang" id="langBtn">EN</button>
       <button class="acct" id="acctBtn" data-i="createacct">إنشاء حساب</button>
-      <div class="user" id="userBox" style="display:none;"><i class="ti ti-user-check"></i><span id="userName"></span></div>
+      <div class="user" id="userBox" style="display:none;cursor:pointer;" role="button" tabindex="0"><i class="ti ti-user-check"></i><span id="userName"></span><i class="ti ti-chevron-down" style="font-size:12px;opacity:.6;"></i></div>
       <button class="cartb" id="cartBtn" aria-label="Cart"><i class="ti ti-clipboard-list"></i><span class="badge" id="badge">0</span></button>
       <button class="burger" id="burger" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
     </div>
@@ -851,6 +851,29 @@ function setAccount(a){
   $('mmAcct').textContent=(lang==='en'?'Signed in as ':'مسجّل الدخول باسم ')+disp;
   try{localStorage.setItem('purifex_account',JSON.stringify(a));}catch(e){}
 }
+function signOut(){
+  account=null;
+  try{localStorage.removeItem('purifex_account');}catch(e){}
+  $('acctBtn').style.display='';$('userBox').style.display='none';
+  $('mmAcct').textContent=lang==='en'?EN.createacct:AR.createacct;
+  closeM();
+  toast(lang==='en'?'Signed out':'تم تسجيل الخروج');
+}
+function accountModal(){
+  const en=lang==='en',disp=account.facility||account.name;
+  openM('<div class="mtop"><div><h3>'+(en?'Your account':'حسابك')+'</h3>'
+   +'<p class="ms">'+(en?'Signed in as ':'مسجّل الدخول باسم ')+esc2(disp)+'</p></div>'
+   +'<button class="xbtn" id="mxAcc"><i class="ti ti-x"></i></button></div>'
+   +'<div style="font-size:13.5px;color:var(--muted);line-height:2;margin-bottom:18px;">'
+   +(account.email?'<div><i class="ti ti-mail"></i> '+esc2(account.email)+'</div>':'')
+   +(account.phone?'<div><i class="ti ti-phone"></i> <span class="num">'+esc2(account.phone)+'</span></div>':'')
+   +(account.address?'<div><i class="ti ti-map-pin"></i> '+esc2(account.address)+'</div>':'')
+   +'</div>'
+   +'<button class="btn btn-out" style="width:100%;" id="soBtn">'+(en?'Sign out':'تسجيل الخروج')+'</button>');
+  $('mxAcc').onclick=closeM;
+  $('soBtn').onclick=signOut;
+}
+function esc2(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function loadSavedAccount(){
   try{const raw=localStorage.getItem('purifex_account');return raw?JSON.parse(raw):null;}catch(e){return null;}
 }
@@ -869,7 +892,9 @@ async function safeInsert(table,payload){
 }
 function reopenGate(){setGate('signup');gate.classList.remove('out');document.body.classList.add('locked');site.classList.add('blurred');}
 $('acctBtn').onclick=reopenGate;
-$('mmAcct').onclick=e=>{e.preventDefault();$('mm').classList.remove('open');if(!account)reopenGate();};
+$('userBox').onclick=accountModal;
+$('userBox').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();accountModal();}});
+$('mmAcct').onclick=e=>{e.preventDefault();$('mm').classList.remove('open');account?accountModal():reopenGate();};
 
 /* ══════ PORTFOLIO / TRACK RECORD ══════ */
 const PORT=[
