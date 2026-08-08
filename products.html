@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المنتجات — Purifex</title>
+<meta name="description" content="تسوّق منتجات Purifex لتنقية وترشيح المياه — أنظمة تحلية، فلاتر، قطع غيار، ومعدات صيانة للمنشآت.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="favicon-180.png">
+<meta property="og:title" content="منتجات Purifex">
+<meta property="og:description" content="تسوّق منتجات تنقية وترشيح المياه للمنشآت.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0E1E33">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/@tabler/icons-webfont/3.1.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --navy:#0E1E33; --navy-2:#16304F; --ink:#12243D; --blue:#1E4D8C;
+  --accent:#7A1230; --accent-d:#57091F; --accent-t:#F8ECEF;
+  --paper:#F4F6F9; --white:#fff; --line:#E1E6EE; --muted:#5E6E82;
+  --ok:#15A46E; --ok-t:#E7F7F0; --danger:#D14343; --danger-t:#FBEAEA;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;}
+h1,h2,h3{font-family:'Cairo',sans-serif;font-weight:800;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
+.num{font-variant-numeric:tabular-nums;direction:ltr;display:inline-block;}
+
+/* nav */
+header.site{background:var(--navy);color:#fff;position:sticky;top:0;z-index:30;}
+.nav-in{max-width:1180px;margin:0 auto;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.brand{display:flex;align-items:center;gap:9px;font-family:'Cairo',sans-serif;font-weight:800;font-size:18px;}
+nav.links{display:flex;gap:26px;font-size:14px;font-weight:600;}
+nav.links a{opacity:.85;}
+nav.links a:hover,nav.links a.on{opacity:1;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.cartBtn{position:relative;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.25);color:#fff;border-radius:9px;padding:9px 16px;font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.cartBtn:hover{background:rgba(255,255,255,.16);}
+.cartBadge{background:var(--accent);color:#fff;border-radius:20px;min-width:19px;height:19px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;padding:0 5px;}
+@media(max-width:760px){nav.links{display:none;}}
+
+/* page head */
+.pagehead{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:44px 0;}
+.pagehead h1{font-size:28px;margin-bottom:8px;}
+.pagehead p{color:#C7D2E0;font-size:14.5px;}
+
+/* filters */
+.filters{position:sticky;top:65px;background:var(--paper);padding:18px 0;z-index:20;border-bottom:1px solid var(--line);}
+.chiprow{display:flex;flex-wrap:wrap;gap:10px;}
+.chip{background:#fff;border:1.5px solid var(--line);border-radius:30px;padding:9px 18px;font-size:13.5px;font-weight:700;color:var(--ink);}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.chip:hover{border-color:var(--accent);}
+
+/* grid */
+.pgrid{padding:34px 0 70px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+@media(max-width:960px){.grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.grid{grid-template-columns:1fr;}}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;}
+.pcard .picon{width:56px;height:56px;border-radius:12px;background:var(--accent-t);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;}
+.pcard .pcat{font-size:11.5px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;}
+.pcard h3{font-size:16px;margin-bottom:8px;line-height:1.4;}
+.pcard .pdesc{color:var(--muted);font-size:13px;flex:1;margin-bottom:14px;}
+.pcard .pfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;}
+.pcard .price{font-family:'Cairo',sans-serif;font-weight:800;font-size:17px;color:var(--navy);}
+.pcard .price small{font-weight:600;font-size:11.5px;color:var(--muted);}
+.addBtn{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.addBtn:hover{background:var(--accent-d);}
+.addBtn.added{background:var(--ok);}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty i{font-size:38px;margin-bottom:10px;display:block;}
+.loading{text-align:center;padding:60px;color:var(--muted);font-size:14px;}
+
+/* cart drawer */
+.overlay{position:fixed;inset:0;background:rgba(10,20,35,.5);z-index:90;display:none;}
+.overlay.on{display:block;}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:100%;max-width:420px;background:#fff;z-index:91;transform:translateX(-100%);transition:transform .25s ease;display:flex;flex-direction:column;}
+.drawer.on{transform:translateX(0);}
+.drawer .dhead{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.drawer .dhead h3{font-size:17px;}
+.drawer .dclose{background:none;border:none;font-size:22px;color:var(--muted);}
+.drawer .ditems{flex:1;overflow-y:auto;padding:16px 22px;}
+.citem{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #F0F2F6;}
+.citem .cinfo{flex:1;}
+.citem .cname{font-size:14px;font-weight:700;margin-bottom:4px;}
+.citem .cunit{font-size:11.5px;color:var(--muted);margin-bottom:8px;}
+.citem .cctrl{display:flex;align-items:center;gap:8px;}
+.qbtn{width:26px;height:26px;border-radius:7px;border:1.5px solid var(--line);background:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qbtn:hover{border-color:var(--accent);}
+.qty{font-weight:700;font-size:14px;min-width:20px;text-align:center;}
+.citem .cprice{font-family:'Cairo',sans-serif;font-weight:800;font-size:14px;color:var(--navy);white-space:nowrap;}
+.citem .crm{background:none;border:none;color:var(--danger);font-size:12px;margin-top:6px;font-weight:700;}
+.drawer .dfoot{padding:18px 22px;border-top:1px solid var(--line);}
+.sumrow{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);margin-bottom:8px;}
+.sumrow.total{font-size:17px;font-weight:800;color:var(--ink);font-family:'Cairo',sans-serif;margin-top:8px;padding-top:12px;border-top:1px dashed var(--line);}
+.btn{border:none;border-radius:10px;padding:13px 24px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;}
+.btn.primary{background:var(--accent);color:#fff;}
+.btn.primary:hover{background:var(--accent-d);}
+.btn.primary:disabled{opacity:.6;}
+.emptyCart{text-align:center;padding:50px 10px;color:var(--muted);}
+.emptyCart i{font-size:36px;margin-bottom:10px;display:block;}
+
+/* checkout modal */
+.modalOverlay{position:fixed;inset:0;background:rgba(10,20,35,.6);z-index:95;display:none;align-items:center;justify-content:center;padding:20px;}
+.modalOverlay.on{display:flex;}
+.modal{background:#fff;border-radius:18px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;}
+.modal h3{font-size:19px;margin-bottom:4px;}
+.modal .sub{color:var(--muted);font-size:13px;margin-bottom:20px;}
+.fl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:0 0 6px;}
+.fi{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:14.5px;margin-bottom:14px;background:#fff;color:var(--ink);}
+.fi:focus{outline:none;border-color:var(--accent);}
+textarea.fi{resize:vertical;min-height:70px;}
+.payopts{display:flex;gap:10px;margin-bottom:16px;}
+.payopt{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:11px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;}
+.payopt.on{border-color:var(--accent);background:var(--accent-t);color:var(--accent-d);}
+.formMsg{font-size:13px;border-radius:9px;padding:10px 12px;margin-bottom:14px;display:none;}
+.formMsg.ok{display:block;background:var(--ok-t);color:var(--ok);}
+.formMsg.err{display:block;background:var(--danger-t);color:var(--danger);}
+.modalClose{background:none;border:none;color:var(--muted);font-size:13px;font-weight:700;width:100%;text-align:center;margin-top:10px;padding:8px;}
+
+footer{background:#0A1524;color:#8CA0BC;padding:30px 0;}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;}
+footer a{opacity:.85;}
+footer a:hover{opacity:1;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="nav-in">
+    <a class="brand" href="index.html"><img src="purifex-logo.png" alt="Purifex" style="height:36px;width:auto;display:block;"></a>
+    <nav class="links">
+      <a href="index.html">الرئيسية</a>
+      <a href="products.html" class="on">المنتجات</a>
+      <a href="index.html#contact">تواصل معنا</a>
+    </nav>
+    <div class="nav-right">
+      <button class="cartBtn" id="cartOpenBtn"><i class="ti ti-shopping-cart"></i> السلة <span class="cartBadge" id="cartCount">0</span></button>
+    </div>
+  </div>
+</header>
+
+<section class="pagehead">
+  <div class="wrap">
+    <h1>منتجاتنا</h1>
+    <p>أنظمة تحلية وترشيح، شمعات وقطع غيار، ومعدات صيانة — أضف ما تحتاجه إلى السلة وأرسل طلب التوريد مباشرةً.</p>
+  </div>
+</section>
+
+<section class="filters">
+  <div class="wrap">
+    <div class="chiprow" id="catChips">
+      <div class="chip on" data-cat="">كل الفئات</div>
+    </div>
+  </div>
+</section>
+
+<section class="pgrid">
+  <div class="wrap">
+    <div id="gridWrap"><div class="loading">جارٍ تحميل المنتجات...</div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 Purifex. جميع الحقوق محفوظة.</div>
+    <a href="admin.html">دخول الموظفين</a>
+  </div>
+</footer>
+
+<!-- cart drawer -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="dhead"><h3>سلة الطلب</h3><button class="dclose" id="drawerClose">&times;</button></div>
+  <div class="ditems" id="ditems"></div>
+  <div class="dfoot" id="dfoot" style="display:none;">
+    <div class="sumrow"><span>الإجمالي الفرعي</span><span class="num" id="sumSub">—</span></div>
+    <div class="sumrow"><span>ضريبة القيمة المضافة (14%)</span><span class="num" id="sumVat">—</span></div>
+    <div class="sumrow total"><span>الإجمالي</span><span class="num" id="sumTotal">—</span></div>
+    <button class="btn primary" id="checkoutBtn" style="margin-top:14px;"><i class="ti ti-send"></i> إتمام الطلب</button>
+  </div>
+</div>
+
+<!-- checkout modal -->
+<div class="modalOverlay" id="modalOverlay">
+  <div class="modal">
+    <h3>بيانات الطلب</h3>
+    <div class="sub">سيتواصل معك فريقنا لتأكيد الطلب وترتيب التوريد.</div>
+    <div class="formMsg" id="formMsg"></div>
+    <form id="checkoutForm">
+      <label class="fl">اسم المنشأة / الشركة</label>
+      <input class="fi" id="fFacility" required>
+      <label class="fl">اسم المسؤول</label>
+      <input class="fi" id="fName" required>
+      <label class="fl">رقم الهاتف</label>
+      <input class="fi" id="fPhone" required>
+      <label class="fl">البريد الإلكتروني (اختياري)</label>
+      <input class="fi" id="fEmail" type="email">
+      <label class="fl">عنوان التوريد</label>
+      <textarea class="fi" id="fAddress" required></textarea>
+      <label class="fl">طريقة الدفع</label>
+      <div class="payopts">
+        <div class="payopt on" data-pay="cash">الدفع عند التوريد</div>
+        <div class="payopt" data-pay="transfer">تحويل بنكي</div>
+        <div class="payopt" data-pay="visa">بطاقة ائتمان</div>
+      </div>
+      <button class="btn primary" id="submitOrderBtn" type="submit"><i class="ti ti-check"></i> تأكيد الطلب</button>
+      <button type="button" class="modalClose" id="modalCloseBtn">إلغاء</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://dsyupeuejmeehjrpvvaw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_0tBa7gpYmUEnffarB4W0ZA_O0V_1vng';
+const sb = (SUPABASE_URL.startsWith('http') && window.supabase)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const $=id=>document.getElementById(id);
+const EGP=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' ج.م';
+const VAT_RATE=0.14;
+const CAT_ICONS={
+  'أنظمة تحلية (RO)':'ti-droplet','فلاتر ما قبل المعالجة':'ti-filter','شمعات وقطع غيار':'ti-settings',
+  'أنظمة التعقيم':'ti-bulb','أنظمة معالجة إضافية':'ti-flask','خزانات ومعدات':'ti-box',
+  'خدمات الصيانة':'ti-tool','أدوات فحص':'ti-clipboard-check'
+};
+
+let products=[], activeCat='', cart=loadCart();
+
+function loadCart(){try{return JSON.parse(localStorage.getItem('purifex_cart')||'[]');}catch(e){return [];}}
+function saveCart(){localStorage.setItem('purifex_cart', JSON.stringify(cart));}
+
+async function loadProducts(){
+  if(!sb){$('gridWrap').innerHTML='<div class="empty"><i class="ti ti-alert-triangle"></i>تعذّر الاتصال بقاعدة البيانات.</div>';return;}
+  const{data,error}=await sb.from('products').select('*').eq('active',true).order('sort_order',{ascending:true});
+  if(error){$('gridWrap').innerHTML='<div class="empty"><i class="ti ti-alert-triangle"></i>تعذّر تحميل المنتجات: '+error.message+'</div>';return;}
+  products=data||[];
+  buildCats();
+  renderGrid();
+  renderCart();
+}
+
+function buildCats(){
+  const cats=[...new Set(products.map(p=>p.category))];
+  $('catChips').innerHTML='<div class="chip'+(activeCat===''?' on':'')+'" data-cat="">كل الفئات</div>'
+    + cats.map(c=>'<div class="chip'+(activeCat===c?' on':'')+'" data-cat="'+esc(c)+'">'+esc(c)+'</div>').join('');
+  document.querySelectorAll('.chip').forEach(el=>el.onclick=()=>{activeCat=el.dataset.cat;buildCats();renderGrid();});
+}
+
+function renderGrid(){
+  const list = activeCat ? products.filter(p=>p.category===activeCat) : products;
+  if(!list.length){$('gridWrap').innerHTML='<div class="empty"><i class="ti ti-package"></i>لا توجد منتجات في هذه الفئة حالياً.</div>';return;}
+  $('gridWrap').innerHTML='<div class="grid">'+list.map(p=>{
+    const icon=CAT_ICONS[p.category]||'ti-box';
+    return '<div class="pcard">'
+      +'<div class="picon"><i class="ti '+icon+'"></i></div>'
+      +'<div class="pcat">'+esc(p.category)+'</div>'
+      +'<h3>'+esc(p.name)+'</h3>'
+      +'<div class="pdesc">'+esc(p.description||'')+'</div>'
+      +'<div class="pfoot">'
+        +'<div class="price">'+EGP(p.price)+'<br><small>'+esc(p.unit)+'</small></div>'
+        +'<button class="addBtn" data-id="'+p.id+'"><i class="ti ti-plus"></i> أضف</button>'
+      +'</div>'
+    +'</div>';
+  }).join('')+'</div>';
+  document.querySelectorAll('.addBtn').forEach(btn=>btn.onclick=()=>{
+    addToCart(btn.dataset.id);
+    btn.classList.add('added'); btn.innerHTML='<i class="ti ti-check"></i> أُضيف';
+    setTimeout(()=>{btn.classList.remove('added');btn.innerHTML='<i class="ti ti-plus"></i> أضف';},1200);
+  });
+}
+
+function addToCart(id){
+  const p=products.find(x=>String(x.id)===String(id)); if(!p) return;
+  const existing=cart.find(c=>c.id===p.id);
+  if(existing) existing.qty+=1;
+  else cart.push({id:p.id,name:p.name,unit:p.unit,price:Number(p.price),qty:1});
+  saveCart(); renderCart(); openDrawer();
+}
+function changeQty(id,delta){
+  const it=cart.find(c=>c.id===id); if(!it) return;
+  it.qty+=delta;
+  if(it.qty<=0) cart=cart.filter(c=>c.id!==id);
+  saveCart(); renderCart();
+}
+function removeItem(id){cart=cart.filter(c=>c.id!==id);saveCart();renderCart();}
+
+function renderCart(){
+  $('cartCount').textContent=cart.reduce((s,c)=>s+c.qty,0);
+  if(!cart.length){
+    $('ditems').innerHTML='<div class="emptyCart"><i class="ti ti-shopping-cart-off"></i>السلة فارغة حالياً.</div>';
+    $('dfoot').style.display='none';
+    return;
+  }
+  $('ditems').innerHTML=cart.map(c=>
+    '<div class="citem">'
+      +'<div class="cinfo"><div class="cname">'+esc(c.name)+'</div><div class="cunit">'+esc(c.unit)+'</div>'
+        +'<div class="cctrl"><button class="qbtn" data-a="dec" data-id="'+c.id+'">-</button><span class="qty num">'+c.qty+'</span><button class="qbtn" data-a="inc" data-id="'+c.id+'">+</button></div>'
+      +'</div>'
+      +'<div><div class="cprice">'+EGP(c.price*c.qty)+'</div><button class="crm" data-id="'+c.id+'">إزالة</button></div>'
+    +'</div>'
+  ).join('');
+  document.querySelectorAll('.qbtn').forEach(b=>b.onclick=()=>changeQty(b.dataset.id, b.dataset.a==='inc'?1:-1));
+  document.querySelectorAll('.crm').forEach(b=>b.onclick=()=>removeItem(b.dataset.id));
+
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const vat=sub*VAT_RATE, total=sub+vat;
+  $('sumSub').textContent=EGP(sub);
+  $('sumVat').textContent=EGP(vat);
+  $('sumTotal').textContent=EGP(total);
+  $('dfoot').style.display='block';
+}
+
+function openDrawer(){$('overlay').classList.add('on');$('drawer').classList.add('on');}
+function closeDrawer(){$('overlay').classList.remove('on');$('drawer').classList.remove('on');}
+$('cartOpenBtn').onclick=openDrawer;
+$('drawerClose').onclick=closeDrawer;
+$('overlay').onclick=()=>{closeDrawer();closeModal();};
+
+/* checkout */
+let payMethod='cash';
+document.querySelectorAll('.payopt').forEach(el=>el.onclick=()=>{
+  document.querySelectorAll('.payopt').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on'); payMethod=el.dataset.pay;
+});
+function openModal(){if(!cart.length)return;$('modalOverlay').classList.add('on');}
+function closeModal(){$('modalOverlay').classList.remove('on');}
+$('checkoutBtn').onclick=openModal;
+$('modalCloseBtn').onclick=closeModal;
+
+function genRef(){
+  return 'PFX-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
+}
+
+$('checkoutForm').onsubmit=async e=>{
+  e.preventDefault();
+  const msgEl=$('formMsg'); msgEl.className='formMsg';
+  if(!sb){msgEl.textContent='تعذّر الاتصال بالخادم حالياً.';msgEl.classList.add('err');return;}
+  if(!cart.length){msgEl.textContent='السلة فارغة.';msgEl.classList.add('err');return;}
+  const btn=$('submitOrderBtn'); btn.disabled=true;
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const vat=sub*VAT_RATE, total=sub+vat;
+  const payload={
+    ref: genRef(),
+    customer_name: $('fName').value.trim(),
+    email: $('fEmail').value.trim() || null,
+    phone: $('fPhone').value.trim(),
+    facility: $('fFacility').value.trim(),
+    address: $('fAddress').value.trim(),
+    items: cart.map(c=>({name:c.name,unit:c.unit,qty:c.qty,price:c.price})),
+    subtotal: sub, vat: vat, total: total,
+    payment_method: payMethod,
+    lang: 'ar',
+    status: 'new'
+  };
+  const{error}=await sb.from('orders').insert(payload);
+  btn.disabled=false;
+  if(error){msgEl.textContent='حدث خطأ أثناء إرسال الطلب: '+error.message;msgEl.classList.add('err');return;}
+  msgEl.textContent='تم إرسال طلبك بنجاح برقم '+payload.ref+'. سيتواصل معك فريقنا قريباً لتأكيد التوريد.';
+  msgEl.classList.add('ok');
+  cart=[]; saveCart(); renderCart();
+  e.target.reset();
+  document.querySelectorAll('.payopt').forEach(x=>x.classList.remove('on'));
+  document.querySelector('.payopt[data-pay="cash"]').classList.add('on');
+  payMethod='cash';
+  setTimeout(()=>{closeModal();closeDrawer();msgEl.className='formMsg';},2600);
+};
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+loadProducts();
+</script>
+</body>
+</html>
