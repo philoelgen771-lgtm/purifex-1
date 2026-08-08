@@ -361,9 +361,22 @@ $('checkoutForm').onsubmit=async e=>{
     lang: 'ar',
     status: 'new'
   };
-  const{error}=await sb.from('orders').insert(payload);
+  let ok=true, errMsg='';
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/orders', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+    if(!r.ok){ok=false; errMsg=(await r.text())||r.statusText;}
+  }catch(e){ok=false; errMsg=e.message;}
   btn.disabled=false;
-  if(error){msgEl.textContent='حدث خطأ أثناء إرسال الطلب: '+error.message;msgEl.classList.add('err');return;}
+  if(!ok){msgEl.textContent='حدث خطأ أثناء إرسال الطلب: '+errMsg;msgEl.classList.add('err');return;}
   msgEl.textContent='تم إرسال طلبك بنجاح برقم '+payload.ref+'. سيتواصل معك فريقنا قريباً لتأكيد التوريد.';
   msgEl.classList.add('ok');
   cart=[]; saveCart(); renderCart();
