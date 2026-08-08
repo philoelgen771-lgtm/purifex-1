@@ -303,6 +303,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(244,246,249,.92);backdrop-
 .succ{text-align:center;padding:10px 0 2px;}
 .succ .ring{width:64px;height:64px;border-radius:50%;background:#E7F7F0;color:var(--ok);display:flex;align-items:center;justify-content:center;font-size:31px;margin:0 auto 16px;animation:pop .55s cubic-bezier(.22,1,.36,1) both;}
 .succ p{color:var(--muted);font-size:14.5px;margin-bottom:18px;}
+.succ .refchip{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:1.5px dashed var(--line);border-radius:12px;padding:10px 18px;margin-bottom:18px;}
+.succ .refchip .num{font-family:'Cairo',sans-serif;font-weight:800;font-size:17px;color:var(--accent-d);}
+.succ .sumcard{text-align:right;background:var(--paper);border-radius:14px;padding:16px 18px;margin-bottom:18px;font-size:13.5px;}
+.succ .sumrow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);}
+.succ .sumrow:last-child{border-bottom:none;}
+.succ .sumrow span:first-child{color:var(--muted);}
+.succ .sumrow b{font-family:'Cairo',sans-serif;}
+.succ .btnrow{display:flex;gap:10px;}
+.succ .btnrow .btn{flex:1;}
+/* ── PAYMENT PICKER ── */
+.paygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;margin-bottom:6px;}
+.paych{display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 8px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink);transition:.18s;}
+.paych i{font-size:22px;color:var(--muted);transition:.18s;}
+.paych:hover{border-color:var(--navy);}
+.paych.on{border-color:var(--accent);background:var(--accent-t);color:var(--accent-d);box-shadow:0 6px 16px -8px rgba(122,18,48,.35);}
+.paych.on i{color:var(--accent-d);}
+@media(max-width:430px){.paygrid{grid-template-columns:1fr 1fr 1fr;gap:7px;}.paych{padding:12px 4px;font-size:11px;}.paych i{font-size:18px;}}
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,180%);background:var(--navy);color:#fff;padding:13px 22px;border-radius:12px;font-size:14px;font-weight:500;z-index:400;transition:transform .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:9px;box-shadow:0 20px 40px -14px rgba(14,30,51,.55);max-width:90vw;}
@@ -1030,8 +1047,38 @@ const mov=$('mov'),mcard=$('mcard');
 function openM(h){mcard.innerHTML=h;mov.classList.add('in');}
 function closeM(){mov.classList.remove('in');}
 mov.onclick=e=>{if(e.target===mov)closeM();};
-$('coBtn').onclick=()=>{account?place():signupModal();};
+$('coBtn').onclick=()=>{account?deliveryModal():signupModal();};
 function mini(){return '<div class="mini"><span><span class="num">'+count()+'</span> '+(lang==='en'?'items':'صنف')+'</span><strong>'+EGP(gross())+'</strong></div>';}
+const PAY_LABELS={ar:{cash:'نقدًا عند التوريد',visa:'بطاقة ائتمان',apple:'Apple Pay'},en:{cash:'Cash on delivery',visa:'Credit card',apple:'Apple Pay'}};
+function deliveryModal(){
+  closeCart();
+  const en=lang==='en';
+  let payMethod='cash';
+  const addr=(account&&account.address)||'';
+  openM('<div class="mtop"><div><h3>'+(en?'Delivery & payment':'التسليم والدفع')+'</h3>'
+   +'<p class="ms">'+(en?'Confirm where to deliver and how you\'ll pay.':'أكّد عنوان التسليم وطريقة الدفع.')+'</p></div>'
+   +'<button class="xbtn" id="mxD"><i class="ti ti-x"></i></button></div>'+mini()
+   +'<label class="fl">'+(en?'Delivery address (stores)':'عنوان التسليم (المخازن)')+'</label>'
+   +'<input class="fi" id="dAddr" value="'+esc2(addr)+'" required>'
+   +'<label class="fl" style="margin-top:16px;">'+(en?'Payment method':'طريقة الدفع')+'</label>'
+   +'<div class="paygrid" id="payGrid">'
+     +'<button type="button" class="paych on" data-p="cash"><i class="ti ti-truck-delivery"></i><span>'+PAY_LABELS[en?'en':'ar'].cash+'</span></button>'
+     +'<button type="button" class="paych" data-p="visa"><i class="ti ti-credit-card"></i><span>'+PAY_LABELS[en?'en':'ar'].visa+'</span></button>'
+     +'<button type="button" class="paych" data-p="apple"><i class="ti ti-brand-apple"></i><span>Apple Pay</span></button>'
+   +'</div>'
+   +'<button class="btn btn-accent" style="width:100%;margin-top:18px;" id="dConfirm">'+(en?'Confirm & send order':'تأكيد وإرسال الطلب')+'</button>');
+  $('mxD').onclick=closeM;
+  $('payGrid').onclick=e=>{
+    const b=e.target.closest('[data-p]');if(!b)return;
+    payMethod=b.dataset.p;
+    $('payGrid').querySelectorAll('.paych').forEach(x=>x.classList.toggle('on',x===b));
+  };
+  $('dConfirm').onclick=()=>{
+    const addrVal=$('dAddr').value.trim();
+    if(!addrVal){$('dAddr').focus();return;}
+    place(addrVal,payMethod);
+  };
+}
 function signupModal(){
   closeCart();
   const en=lang==='en';
@@ -1051,7 +1098,7 @@ function signupModal(){
   $('toSi').onclick=e=>{e.preventDefault();signinModal();};
   $('cof').onsubmit=e=>{e.preventDefault();
     setAccount({name:$('oP').value.trim(),facility:$('oN').value.trim(),email:$('oE').value.trim(),phone:$('oT').value.trim(),address:$('oA').value.trim()});
-    place();
+    deliveryModal();
   };
 }
 function signinModal(){
@@ -1071,34 +1118,44 @@ function signinModal(){
     const saved=loadSavedAccount();
     if(saved&&saved.email===m){setAccount(saved);}
     else{setAccount({name:m.split('@')[0],facility:m.split('@')[0],email:m,phone:'',address:''});}
-    place();
+    deliveryModal();
   };
 }
-async function place(){
+async function place(address,paymentMethod){
   const en=lang==='en',g=gross(),n=net(),ref='PX-'+Math.floor(100000+Math.random()*899999);
   const items=Object.entries(cart).map(([id,qty])=>{const p=byId(id);return {id,name:p[2],unit:p[3],qty,price:p[5],line_total:+(p[5]*qty).toFixed(2)};});
-  closeCart();
+  const itemCount=count();
+  closeCart();closeM();
   openM('<div class="succ"><div class="ring"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i></div><h3>'+(en?'Sending your order...':'جارٍ إرسال طلبك...')+'</h3></div>');
   try{
+    if(account) account.address=address;
+    setAccount(account);
     await safeInsert('orders',{
       ref,
       customer_name: account.name || (account.email?account.email.split('@')[0]:'—'),
       email: account.email||null,
       phone: account.phone||null,
       facility: account.facility||account.name||null,
-      address: account.address||null,
+      address: address||null,
       items,
       subtotal: +n.toFixed(2),
       vat: +(g-n).toFixed(2),
       total: +g.toFixed(2),
-      payment_method: 'cash',
+      payment_method: paymentMethod||'cash',
       lang
     });
     cart={};sync();
+    const payLbl=PAY_LABELS[en?'en':'ar'][paymentMethod]||paymentMethod;
     openM('<div class="succ"><div class="ring"><i class="ti ti-check"></i></div><h3>'+(en?'Order received':'تم استلام الطلب')+'</h3>'
-     +'<p>'+(en?'Thank you, ':'شكرًا، ')+(account.name||account.email)+'. '+(en?'Order ':'رقم الطلب ')+'<strong class="num">'+ref+'</strong> '
-     +(en?'for ':'بقيمة ')+'<strong>'+EGP(g)+'</strong> '+(en?'is confirmed. Supply within 72 hours to your stores.':'قيد التنفيذ. التوريد خلال 72 ساعة بمخازنكم.')+'</p>'
-     +'<button class="btn btn-navy" style="width:100%;" id="dn">'+(en?'Back to the price list':'العودة لقائمة الأسعار')+'</button></div>');
+     +'<p>'+(en?'Thank you, ':'شكرًا، ')+esc2(account.name||account.email)+'. '+(en?'We\'ll supply within 72 hours to your stores.':'سنوردها خلال 72 ساعة بمخازنكم.')+'</p>'
+     +'<div class="refchip"><i class="ti ti-receipt"></i> <span class="num">'+ref+'</span></div>'
+     +'<div class="sumcard">'
+       +'<div class="sumrow"><span>'+(en?'Items':'عدد الأصناف')+'</span><b class="num">'+itemCount+'</b></div>'
+       +'<div class="sumrow"><span>'+(en?'Payment':'طريقة الدفع')+'</span><b>'+esc2(payLbl)+'</b></div>'
+       +'<div class="sumrow"><span>'+(en?'Delivery to':'التسليم إلى')+'</span><b>'+esc2(address||'—')+'</b></div>'
+       +'<div class="sumrow"><span>'+(en?'Total (incl. VAT)':'الإجمالي شامل الضريبة')+'</span><b class="num">'+EGP(g)+'</b></div>'
+     +'</div>'
+     +'<div class="btnrow"><button class="btn btn-navy" id="dn">'+(en?'Back to price list':'العودة لقائمة الأسعار')+'</button></div></div>');
     $('dn').onclick=()=>{closeM();goTo('catalog');};
   }catch(err){
     console.error(err);
