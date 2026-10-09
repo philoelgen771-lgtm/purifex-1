@@ -362,11 +362,11 @@ function orderCard(r){
    +'<div class="rtop">'
      +'<div><div class="ref num">'+r.ref+'</div><div class="rname">'+esc(r.customer_name)+'</div>'
      +'<div class="rmeta">'+fmtDate(r.created_at)+' · '+(r.phone?'<span class="num">'+esc(r.phone)+'</span> · ':'')+payLabel(r.payment_method)+'</div></div>'
-     +'<div style="display:flex;align-items:center;gap:12px;">'+statusBadge(r.status,ORDER_STATUSES)+'<div class="rtotal">'+EGP(r.total)+'</div></div>'
+     +'<div style="display:flex;align-items:center;gap:12px;">'+statusBadge(r.status,ORDER_STATUSES)+'<div class="rtotal">'+(Number(r.total)>0?EGP(r.total):'عرض سعر')+'</div></div>'
    +'</div>'
    +'<div class="rdet">'
      +'<table class="itable"><thead><tr><th>الصنف</th><th>الوحدة</th><th>الكمية</th><th>السعر</th></tr></thead><tbody>'
-     +items.map(it=>'<tr><td>'+esc(it.name)+'</td><td>'+esc(it.unit||'')+'</td><td class="num">'+it.qty+'</td><td class="num">'+EGP(it.price)+'</td></tr>').join('')
+     +items.map(it=>'<tr><td>'+esc(it.name)+'</td><td>'+esc(it.unit||'')+'</td><td class="num">'+it.qty+'</td><td class="num">'+(it.price!=null?EGP(it.price):'—')+'</td></tr>').join('')
      +'</tbody></table>'
      +'<div style="font-size:13px;color:var(--muted);margin-bottom:12px;">'
        +(r.email?'البريد: '+esc(r.email)+'<br>':'')+(r.address?'العنوان: '+esc(r.address):'')
@@ -443,7 +443,7 @@ $('pForm').onsubmit=async e=>{
   load();
 };
 
-function payLabel(m){return m==='cash'?'الدفع عند التوريد':m==='visa'?'بطاقة ائتمان':m==='transfer'?'تحويل بنكي':m==='apple'?'Apple Pay':(m||'');}
+function payLabel(m){return m==='cash'?'الدفع عند التوريد':m==='visa'?'بطاقة ائتمان':m==='transfer'?'تحويل بنكي':m==='apple'?'Apple Pay':m==='quote'?'طلب عرض سعر':(m||'');}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 checkSession();
