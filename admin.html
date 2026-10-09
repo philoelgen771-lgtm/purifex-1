@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة الطلبات — Purifex</title>
+<title>لوحة الطلبات — الشريف للتوريدات</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -78,7 +78,7 @@ header.top{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:
 .rowc .rname{font-size:14px;font-weight:700;}
 .rowc .rmeta{font-size:12.5px;color:var(--muted);margin-top:3px;}
 .rowc .rtotal{font-family:'Cairo',sans-serif;font-weight:800;font-size:16px;color:var(--accent-d);}
-.badge{font-size:11.5px;font-weight:800;border-radius:20px;padding:4px 11px;white-space:nowrap;}
+.badge{font-size:12px;font-weight:800;border-radius:20px;padding:4px 11px;white-space:nowrap;}
 .badge.new{background:var(--warn-t);color:var(--warn);}
 .badge.contacted{background:#E7F0FB;color:var(--blue);}
 .badge.fulfilled,.badge.closed{background:var(--ok-t);color:var(--ok);}
@@ -108,7 +108,7 @@ header.top{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:
 .iconBtn:hover{border-color:var(--accent);color:var(--accent);}
 .iconBtn.danger:hover{border-color:var(--danger);color:var(--danger);}
 .inactive{opacity:.5;}
-.tagInactive{background:var(--danger-t);color:var(--danger);font-size:11px;font-weight:800;border-radius:20px;padding:3px 9px;margin-inline-start:8px;}
+.tagInactive{background:var(--danger-t);color:var(--danger);font-size:12px;font-weight:800;border-radius:20px;padding:3px 9px;margin-inline-start:8px;}
 
 /* product modal */
 .modalOverlay{position:fixed;inset:0;background:rgba(10,20,35,.6);z-index:95;display:none;align-items:center;justify-content:center;padding:20px;}
@@ -122,7 +122,7 @@ header.top{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:
 
 <div id="loginWrap">
   <div class="loginCard">
-    <div class="lg"><img src="purifex-logo.png" alt="Purifex" style="height:44px;width:auto;display:block;margin:0 auto;"></div>
+    <div class="lg"><img src="el-sherif-logo.webp" alt="الشريف للتوريدات" style="height:64px;width:auto;display:block;margin:0 auto;"></div>
     <p>لوحة تحكم الطلبات — لفريق العمل فقط</p>
     <div class="loginErr" id="loginErr"></div>
     <form id="loginForm">
@@ -138,7 +138,7 @@ header.top{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:
 <div id="dash">
   <header class="top">
     <div class="top-in">
-      <div class="lg"><img src="purifex-logo.png" alt="Purifex" style="height:30px;width:auto;display:block;"> لوحة طلبات</div>
+      <div class="lg"><img src="el-sherif-logo-light.webp" alt="" style="height:36px;width:auto;display:block;"> الشريف للتوريدات · لوحة طلبات</div>
       <button class="logout" id="logoutBtn"><i class="ti ti-logout"></i> تسجيل الخروج</button>
     </div>
   </header>
@@ -390,10 +390,10 @@ function productCard(p){
   return '<div class="pcard-row'+(p.active?'':' inactive')+'">'
     +'<div class="pinfo"><div class="pname">'+esc(p.name)+(p.active?'':'<span class="tagInactive">غير مفعّل</span>')+'</div>'
     +'<div class="pmeta">'+esc(p.category)+(p.sku?' · SKU: '+esc(p.sku):'')+'</div></div>'
-    +'<div class="pprice">'+EGP(p.price)+' <span style="font-size:11px;font-weight:600;color:var(--muted);">/ '+esc(p.unit)+'</span></div>'
+    +'<div class="pprice">'+EGP(p.price)+' <span style="font-size:12px;font-weight:600;color:var(--muted);">/ '+esc(p.unit)+'</span></div>'
     +'<div class="pactions">'
-      +'<button class="iconBtn editP" data-id="'+p.id+'"><i class="ti ti-pencil"></i></button>'
-      +'<button class="iconBtn danger delP" data-id="'+p.id+'"><i class="ti ti-trash"></i></button>'
+      +'<button class="iconBtn editP" aria-label="تعديل" data-id="'+p.id+'"><i class="ti ti-pencil" aria-hidden="true"></i></button>'
+      +'<button class="iconBtn danger delP" aria-label="حذف" data-id="'+p.id+'"><i class="ti ti-trash"></i></button>'
     +'</div></div>';
 }
 
