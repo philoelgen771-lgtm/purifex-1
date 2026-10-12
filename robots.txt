@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://philoelgen771-lgtm.github.io/purifex-1/sitemap.xml
+Sitemap: https://elsherifsupplies.com/sitemap.xml
