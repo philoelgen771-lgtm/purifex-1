@@ -2,7 +2,7 @@
 
 Website for El Sherif Supplies, hospitality supplies for hotels, restaurants and cafés in Egypt since 2004.
 
-**Live site:** https://philoelgen771-lgtm.github.io/purifex-1/
+**Live site:** https://elsherifsupplies.com/
 
 ## What the site does
 - Arabic / English catalog of 378 items in 6 categories (data from Supabase).
